@@ -32,7 +32,7 @@ jobs:
               "user_login": ${{ github.event.sender.login }},
               "action": "add-remove-labels"
             }' >> context.json
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: context.json
           path: ./
