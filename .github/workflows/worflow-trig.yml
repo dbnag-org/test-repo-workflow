@@ -49,8 +49,14 @@ jobs:
             let data = fs.readFileSync('./context.json');
             return JSON.parse(data);
     outputs:
-      property_one: ${{fromJSON(steps.return-parsed-json.outputs.result).prop_1}}
-      property_two: ${{fromJSON(steps.return-parsed-json.outputs.result).prop_2}}
+      pr_num: ${{fromJSON(steps.return-parsed-json.outputs.result).pr_num}}
+      event_action: ${{fromJSON(steps.return-parsed-json.outputs.result).event_action}}
+      review_state: ${{fromJSON(steps.return-parsed-json.outputs.result).review_state}}
+      event_name: ${{fromJSON(steps.return-parsed-json.outputs.result).event_name}}
+      comment_body: ${{fromJSON(steps.return-parsed-json.outputs.result).comment_body}}
+      review_comment_body: ${{fromJSON(steps.return-parsed-json.outputs.result).review_comment_body}}
+      user_login: ${{fromJSON(steps.return-parsed-json.outputs.result).user_login}}
+      action: ${{fromJSON(steps.return-parsed-json.outputs.result).action}}
   log_context_values:
     needs:
       - download_context_artifact
