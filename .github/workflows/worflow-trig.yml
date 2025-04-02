@@ -4,6 +4,11 @@ on:
     workflows: ["Dummy Workflow on review"]
     types:
       - completed
+permissions:
+  pull-requests: write
+  contents: write
+  issues: write
+  
 jobs:  
   run_on_workflow_a_success:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -63,8 +68,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Set all Env Variable'
-        env:
-          GITHUB_TOKEN: ${{ secrets.OPENDATAHUB_TESTS_BOT_PAT }}
         run: |
           echo "GITHUB_PR_NUMBER=${{ needs.download_context_artifact.outputs.pr_num }}" >> "$GITHUB_ENV"
           echo "GITHUB_EVENT_ACTION=${{ needs.download_context_artifact.outputs.event_action }}"  >> "$GITHUB_ENV"
@@ -79,4 +82,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - name: 'Run add-remove-labels action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.OPENDATAHUB_TESTS_BOT_PAT }}
         run: uv run python .github/workflows/scripts/pr_workflow.py
