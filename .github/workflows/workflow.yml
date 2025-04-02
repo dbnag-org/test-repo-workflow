@@ -3,8 +3,6 @@ name: Dummy Workflow on review
 on: 
   pull_request_review:
     types: [submitted, edited]
-  pull_request_review_comment:
-    types: [created, edited]
 
 permissions:
   pull-requests: write
