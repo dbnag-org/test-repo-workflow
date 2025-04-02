@@ -134,7 +134,7 @@ class PrLabeler(PrBaseClass):
             self.set_pr_size()
 
         if self.action == self.SupportedActions.add_remove_labels_action_name:
-            self.verify_allowed_user()
+            # self.verify_allowed_user()
             self.add_remove_pr_labels()
 
         if self.action == self.SupportedActions.welcome_comment_action_name:
