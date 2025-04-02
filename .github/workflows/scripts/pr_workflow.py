@@ -272,11 +272,11 @@ class PrLabeler(PrBaseClass):
             label_to_remove = change_requested_label
             label_to_add = lgtm_label
 
-        elif self.review_state == "CHANGES_REQUESTED":
+        elif self.review_state == "changes_requested":
             label_to_add = change_requested_label
             label_to_remove = lgtm_label
 
-        elif self.review_state == "COMMENTED":
+        elif self.review_state == "commented":
             label_to_add = f"{COMMENTED_BY_LABEL_PREFIX}{self.user_login}"
 
         if label_to_add and label_to_add not in self.pr_labels:
