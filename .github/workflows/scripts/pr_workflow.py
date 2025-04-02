@@ -249,6 +249,11 @@ class PrLabeler(PrBaseClass):
             self.issue_comment_label_actions()
 
             return
+        elif self.event_name == "workflow_run" and self.event_action == "submitted":
+            self.pull_request_review_label_actions()
+            self.issue_comment_label_actions()
+
+            return
 
         LOGGER.warning("`add_remove_pr_label` called without a supported event")
 
