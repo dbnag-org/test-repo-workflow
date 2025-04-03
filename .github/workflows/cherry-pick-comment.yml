@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
       - name: Automatic Cherry Pick
         run: |
-           echo ${{ github.event.comment }}
+           echo ${{ github.event.comment.author_association }}
       - name: Automatic Cherry Pick
         uses:  dbasunag/cherry-pick-pr@master
         env:
