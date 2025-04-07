@@ -6,11 +6,12 @@ jobs:
   cherry-pick:
     name: Cherry Pick
     if: |
-      github.event.issue.pull_request != '' && contains(github.event.comment.body, '/cherry-pick') && 
-      ((github.event.pull_request.author_association == 'CONTRIBUTOR') ||
-      (github.event.pull_request.author_association == 'MEMBER') ||
-      (github.event.pull_request.author_association == 'OWNER') ||
-       (github.event.pull_request.author_association == 'COLLABORATOR')) 
+      github.event.issue.pull_request != '' && contains(github.event.comment.body, '/cherry-pick') &&
+      ((github.event.pull_request.author_association != 'NONE') && 
+      (github.event.pull_request.author_association != 'MANNEQUIN') &&
+      (github.event.pull_request.author_association != 'FIRST_TIMER') && 
+      (github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'))
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the latest code
