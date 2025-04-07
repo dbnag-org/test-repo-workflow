@@ -6,7 +6,11 @@ jobs:
   cherry-pick:
     name: Cherry Pick
     if: |
-      github.event.issue.pull_request != '' && contains(github.event.comment.body, '/cherry-pick')
+      github.event.issue.pull_request != '' && contains(github.event.comment.body, '/cherry-pick') &&
+      ((github.event.pull_request.author_association != 'NONE') && 
+      (github.event.pull_request.author_association != 'MANNEQUIN') &&
+      (github.event.pull_request.author_association != 'FIRST_TIMER') && 
+      (github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'))
 
     runs-on: ubuntu-latest
     steps:
@@ -19,9 +23,6 @@ jobs:
         run: |
            echo ${{ github.event.comment.author_association }}
       - name: Automatic Cherry Pick
-        if: |
-         ((github.event.pull_request.author_association != 'NONE') && (github.event.pull_request.author_association != 'MANNEQUIN')
-         && (github.event.pull_request.author_association != 'FIRST_TIMER') && (github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'))
         uses:  dbasunag/cherry-pick-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.OPENDATAHUB_TESTS_BOT_PAT }}
