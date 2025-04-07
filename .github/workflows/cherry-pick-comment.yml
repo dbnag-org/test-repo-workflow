@@ -20,7 +20,8 @@ jobs:
            echo ${{ github.event.comment.author_association }}
       - name: Automatic Cherry Pick
         if: |
-          github.event.comment.author_association in ['CONTRIBUTOR', 'MEMBER','OWNER','COLLABORATOR'] 
+         ((github.event.pull_request.author_association != 'NONE') && (github.event.pull_request.author_association != 'MANNEQUIN')
+         && (github.event.pull_request.author_association != 'FIRST_TIMER') && (github.event.pull_request.author_association != 'FIRST_TIME_CONTRIBUTOR'))
         uses:  dbasunag/cherry-pick-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.OPENDATAHUB_TESTS_BOT_PAT }}
