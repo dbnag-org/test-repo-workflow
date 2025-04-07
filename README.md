@@ -1,2 +1,2 @@
 # test-repo-workflow
-test pr
+test pr cherry-pick
