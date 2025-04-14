@@ -23,7 +23,7 @@ SUPPORTED_LABELS: set[str] = {
 CANCEL_ACTION: str = "cancel"
 WELCOME_COMMENT: str = f"""
 The following are automatically added/executed:
- * PR size label.
+ * PR size label.asdasd
  * Run [pre-commit](https://pre-commit.ci/)
  * Run [tox](https://tox.wiki/)
  * Add PR author as the PR assignee
