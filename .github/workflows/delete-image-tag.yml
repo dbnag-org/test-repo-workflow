@@ -23,7 +23,7 @@ jobs:
         - name: Configure regctl authentication
           run: |
             regctl registry login quay.io -u ${{ secrets.QUAY_USERNAME }} -p ${{ secrets.QUAY_PASSWORD }}
-            echo "TAG_TO_DELETE=$(regctl tag ls quay.io/dbasunag/my-test-repo --includ pr-${{ github.event.issue.number }})" >> $GITHUB_ENV
+            echo "TAG_TO_DELETE=$(regctl tag ls quay.io/dbasunag/my-test-repo --include pr-${{ github.event.issue.number }})" >> $GITHUB_ENV
         - name: Delete Quay Tag
           if: env.TAG_TO_DELETE != ''
           run: |
