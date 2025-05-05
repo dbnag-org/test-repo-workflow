@@ -29,4 +29,4 @@ jobs:
           if: env.TAG_TO_DELETE != ''
           run: |
             echo "Deleting tag '$TAG_TO_DELETE' from repository..."
-            regctl tag rm quay.io/dbasunag/my-test-repo:pr-${{ github.event.issue.number }}
+            regctl tag rm quay.io/dbasunag/my-test-repo:pr-${{ github.event.pull_request.number }}
