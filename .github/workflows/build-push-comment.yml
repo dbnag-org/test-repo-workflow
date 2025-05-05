@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Set env TAG for image
         run: |
-          echo "TAG=pr-${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
+          echo "TAG=pr-${{ github.event.issue.number }}" >> "$GITHUB_ENV"
       - name: Build Image to push
         id: build-image
         uses: redhat-actions/buildah-build@v2
