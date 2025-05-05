@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   push-container-on-comment:
+    name: push-registry-image
+    if: contains(github.event.comment.body, '/build-and-push-container-image')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
