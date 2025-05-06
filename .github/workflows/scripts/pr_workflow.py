@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 import re
 import sys
@@ -36,10 +34,12 @@ class PrBaseClass:
         add_remove_labels_action_name: str = "add-remove-labels"
         pr_size_action_name: str = "add-pr-size-label"
         welcome_comment_action_name: str = "add-welcome-comment-set-assignee"
+        build_push_pr_image_action_name: str = "push-container-on-comment"
         supported_actions: set[str] = {
             pr_size_action_name,
             add_remove_labels_action_name,
             welcome_comment_action_name,
+            build_push_pr_image_action_name,
         }
 
     def __init__(self) -> None:
@@ -58,9 +58,10 @@ class PrBaseClass:
         self.set_gh_config()
 
     def verify_base_config(self) -> None:
+        LOGGER.info(f"My action is: {self.action}")
         if not self.action or self.action not in self.SupportedActions.supported_actions:
             sys.exit(
-                "`ACTION` is not set in workflow or is not supported. "
+                f"`{self.action}` is not set in workflow or is not supported. "
                 f"Supported actions: {self.SupportedActions.supported_actions}"
             )
 
@@ -99,21 +100,22 @@ class PrLabeler(PrBaseClass):
             self.comment_body = os.getenv("REVIEW_COMMENT_BODY", "")
         self.last_commit = list(self.pr.get_commits())[-1]
         self.last_commit_sha = self.last_commit.sha
-
+        print(f"Action is: {self.action}")
         self.verify_labeler_config()
 
-    def verify_allowed_user(self) -> None:
+    def verify_allowed_user(self) -> bool:
         org: Organization = self.gh_client.get_organization("opendatahub-io")
         # slug is the team name with replaced special characters,
         # all words to lowercase and spaces replace with a -
         team: Team = org.get_team_by_slug("opendatahub-tests-contributors")
         try:
             # check if the user is a member of opendatahub-tests-contributors
-            membership = team.get_team_membership(self.user_login)
+            membership = team.get_team_membership(member=self.user_login)
             LOGGER.info(f"User {self.user_login} is a member of the test contributor team. {membership}")
+            return True
         except UnknownObjectException:
             LOGGER.error(f"User {self.user_login} is not allowed for this action. Exiting.")
-            sys.exit(0)
+            return False
 
     def verify_labeler_config(self) -> None:
         if self.action == self.SupportedActions.add_remove_labels_action_name and self.event_name in (
@@ -133,9 +135,13 @@ class PrLabeler(PrBaseClass):
         if self.action == self.SupportedActions.pr_size_action_name:
             self.set_pr_size()
 
+        if self.action == self.SupportedActions.build_push_pr_image_action_name:
+            if not self.verify_allowed_user():
+                sys.exit(1)
+
         if self.action == self.SupportedActions.add_remove_labels_action_name:
-            # self.verify_allowed_user()
-            self.add_remove_pr_labels()
+            if self.verify_allowed_user():
+                self.add_remove_pr_labels()
 
         if self.action == self.SupportedActions.welcome_comment_action_name:
             self.add_welcome_comment_set_assignee()
@@ -233,6 +239,7 @@ class PrLabeler(PrBaseClass):
                     label.lower() == VERIFIED_LABEL_STR
                     or label.lower().startswith(LGTM_BY_LABEL_PREFIX)
                     or label.lower().startswith(CHANGED_REQUESTED_BY_LABEL_PREFIX)
+                    or label.lower().startswith(COMMENTED_BY_LABEL_PREFIX)
                 ):
                     LOGGER.info(f"Removing label {label}")
                     self.pr.remove_from_labels(label=label)
@@ -248,9 +255,10 @@ class PrLabeler(PrBaseClass):
             self.pull_request_review_label_actions()
 
             return
+
+        # We will only reach here if the PR was created from a fork
         elif self.event_name == "workflow_run" and self.event_action == "submitted":
             self.pull_request_review_label_actions()
-
             return
 
         LOGGER.warning("`add_remove_pr_label` called without a supported event")
