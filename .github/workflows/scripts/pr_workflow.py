@@ -104,10 +104,10 @@ class PrLabeler(PrBaseClass):
         self.verify_labeler_config()
 
     def verify_allowed_user(self) -> bool:
-        org: Organization = self.gh_client.get_organization("opendatahub-io")
+        org: Organization = self.gh_client.get_organization("dbnag-org")
         # slug is the team name with replaced special characters,
         # all words to lowercase and spaces replace with a -
-        team: Team = org.get_team_by_slug("opendatahub-tests-contributors")
+        team: Team = org.get_team_by_slug("test-team")
         try:
             # check if the user is a member of opendatahub-tests-contributors
             membership = team.get_team_membership(member=self.user_login)
