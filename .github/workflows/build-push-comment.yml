@@ -10,12 +10,42 @@ permissions:
   issues: write
 
 jobs:
+  check-user-member:
+    runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '/build-and-push-container-image')
+    steps:
+      - name: Check if organization member
+        id: is_organization_member
+        uses: JamesSingleton/is-organization-member@1.1.0
+        with:
+          organization: dbasunag-org
+          username: ${{ github.event.issue.user.login }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Comment
+        if: |
+          ${{ steps.is_organization_member.outputs.result == 'false' }}
+        run: |
+          echo "User Does Not Belong to testorg"
+          exit(1)
+        
   push-container-on-comment:
     name: push-registry-image
-    if: contains(github.event.comment.body, '/build-and-push-container-image')
+    needs: [check-user-member]
+    if: |
+      ${{ always() && contains(join(needs.*.result, ','), 'success') }} && 
+      contains(github.event.comment.body, '/build-and-push-container-image')
     runs-on: ubuntu-latest
     steps:
+      - name: Check if organization member
+        id: is_organization_member
+        uses: JamesSingleton/is-organization-member@1.1.0
+        with:
+          organization: dbasunag-org
+          username: ${{ github.event.issue.user.login }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Repository
+        if: |
+         ${{ steps.is_organization_member.outputs.result == 'true' }}
         uses: actions/checkout@v4
       - name: Set env TAG for image
         run: |
