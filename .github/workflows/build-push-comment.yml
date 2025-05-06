@@ -25,6 +25,7 @@ jobs:
         if: |
           ${{ steps.is_organization_member.outputs.result == 'false' }}
         run: |
+          echo ${{ steps.is_organization_member.outputs.result }}
           echo "User Does Not Belong to testorg"
           exit(1)
         
