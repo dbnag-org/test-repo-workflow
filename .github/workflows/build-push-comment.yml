@@ -10,44 +10,25 @@ permissions:
   issues: write
 
 jobs:
-  check-user-member:
-    runs-on: ubuntu-latest
-    if: contains(github.event.comment.body, '/build-and-push-container-image')
-    steps:
-      - name: Check if organization member
-        id: is_organization_member
-        uses: JamesSingleton/is-organization-member@1.1.0
-        with:
-          organization: dbasunag-org
-          username: ${{ github.event.issue.user.login }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Comment
-        if: |
-          ${{ steps.is_organization_member.outputs.result == 'false' }}
-        run: |
-          echo ${{ steps.is_organization_member.outputs.result }}
-          echo "User Does Not Belong to testorg"
-          exit(1)
-        
   push-container-on-comment:
     name: push-registry-image
-    needs: [check-user-member]
-    if: |
-      ${{ always() && contains(join(needs.*.result, ','), 'success') }} && 
-      contains(github.event.comment.body, '/build-and-push-container-image')
+    if: contains(github.event.comment.body, '/build-push-pr-image')
     runs-on: ubuntu-latest
     steps:
-      - name: Check if organization member
-        id: is_organization_member
-        uses: JamesSingleton/is-organization-member@1.1.0
-        with:
-          organization: dbasunag-org
-          username: ${{ github.event.issue.user.login }}
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Repository
-        if: |
-         ${{ steps.is_organization_member.outputs.result == 'true' }}
         uses: actions/checkout@v4
+      - name: Check if the user is authorized
+        env:
+          GITHUB_TOKEN: ${{ secrets.RHODS_CI_BOT_PAT }}
+          GITHUB_PR_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_EVENT_ACTION: ${{ github.event.action }}
+          GITHUB_EVENT_REVIEW_STATE: ${{ github.event.review.state }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          REVIEW_COMMENT_BODY: ${{ github.event.review.body }}
+          GITHUB_USER_LOGIN: ${{ github.event.sender.login }}
+          ACTION: "push-container-on-comment"
+        run: uv run python .github/workflows/scripts/pr_workflow.py
       - name: Set env TAG for image
         run: |
           echo "TAG=pr-${{ github.event.issue.number }}" >> "$GITHUB_ENV"
