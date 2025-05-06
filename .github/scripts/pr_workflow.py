@@ -58,6 +58,7 @@ class PrBaseClass:
         self.set_gh_config()
 
     def verify_base_config(self) -> None:
+        LOGGER.info(f"My action is: {self.action}")
         if not self.action or self.action not in self.SupportedActions.supported_actions:
             sys.exit(
                 f"`{self.action}` is not set in workflow or is not supported. "
