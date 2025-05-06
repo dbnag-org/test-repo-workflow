@@ -60,7 +60,7 @@ class PrBaseClass:
     def verify_base_config(self) -> None:
         if not self.action or self.action not in self.SupportedActions.supported_actions:
             sys.exit(
-                "`ACTION` is not set in workflow or is not supported. "
+                f"`{self.action}` is not set in workflow or is not supported. "
                 f"Supported actions: {self.SupportedActions.supported_actions}"
             )
 
