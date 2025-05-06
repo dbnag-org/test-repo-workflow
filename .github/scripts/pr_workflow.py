@@ -100,7 +100,7 @@ class PrLabeler(PrBaseClass):
             self.comment_body = os.getenv("REVIEW_COMMENT_BODY", "")
         self.last_commit = list(self.pr.get_commits())[-1]
         self.last_commit_sha = self.last_commit.sha
-
+        print(f"Action is: {self.action}")
         self.verify_labeler_config()
 
     def verify_allowed_user(self) -> bool:
