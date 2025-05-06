@@ -58,6 +58,7 @@ class PrBaseClass:
         self.set_gh_config()
 
     def verify_base_config(self) -> None:
+        LOGGER.info(f"My action is: {self.action}")
         if not self.action or self.action not in self.SupportedActions.supported_actions:
             sys.exit(
                 f"`{self.action}` is not set in workflow or is not supported. "
@@ -99,7 +100,7 @@ class PrLabeler(PrBaseClass):
             self.comment_body = os.getenv("REVIEW_COMMENT_BODY", "")
         self.last_commit = list(self.pr.get_commits())[-1]
         self.last_commit_sha = self.last_commit.sha
-
+        print(f"Action is: {self.action}")
         self.verify_labeler_config()
 
     def verify_allowed_user(self) -> bool:
