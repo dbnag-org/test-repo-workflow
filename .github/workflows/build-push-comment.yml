@@ -14,10 +14,26 @@ jobs:
     if: contains(github.event.comment.body, '/build-push-pr-image')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/github-script@v3
+        id: get-pr
         with:
-          ref: ${{ github.ref }}
+          script: |
+            const request = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            }
+            core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
+            try {
+              const result = await github.pulls.get(request)
+              return result.data
+            } catch (err) {
+              core.setFailed(`Request failed with error ${err}`)
+            }
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}
+          ref: ${{ fromJSON(steps.get-pr.outputs.result).head.sha }} #
       - name: print info
         run: |
           echo "Head red: ${{ steps.comment-branch.outputs.head_ref }}"
