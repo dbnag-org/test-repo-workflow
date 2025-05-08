@@ -14,8 +14,13 @@ jobs:
     if: contains(github.event.comment.body, '/build-push-pr-image')
     runs-on: ubuntu-latest
     steps:
+      - name: Get PR branch
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
