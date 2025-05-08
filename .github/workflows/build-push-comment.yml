@@ -17,13 +17,15 @@ jobs:
       - name: Get PR branch
         uses: xt0rted/pull-request-comment-branch@v1
         id: comment-branch
-      - name: print info
-        run: |
-          echo "Head red: ${{ steps.comment-branch.outputs.head_ref }}"
+     
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
+      - name: print info
+        run: |
+          echo "Head red: ${{ steps.comment-branch.outputs.head_ref }}"
+          cat README.md
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
