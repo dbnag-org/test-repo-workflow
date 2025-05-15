@@ -35,6 +35,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: check if started by bot account
+        run: |
+           sender_login="${{ github.event.sender.login }}"
+           excluded_string="bot"
+           if [[ "$sender_login" == *"$excluded_string"* ]]; then
+             exit 1
+           else
+            echo "Sender is not a bot.  Continuing workflow. Sender: $sender_login"
+           fi
       - uses: actions/checkout@v4
 
       - name: Install uv
