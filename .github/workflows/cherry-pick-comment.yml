@@ -23,6 +23,6 @@ jobs:
         run: |
            echo ${{ github.event.comment.author_association }}
       - name: Automatic Cherry Pick
-        uses:  dbasunag/cherry-pick-pr@master
+        uses:  dbasunag/cherry-pick-pr@signoff
         env:
           GITHUB_TOKEN: ${{ secrets.OPENDATAHUB_TESTS_BOT_PAT }}
